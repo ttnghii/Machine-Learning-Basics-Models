@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from sklearn.metrics import precision_score, recall_score, f1_score, \
-    accuracy_score, confusion_matrix, classification_report
+    accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
 
 
 font = {
@@ -239,3 +239,10 @@ def calculate_performance(
 
     return performance[main_score]
 
+
+def display_cfs_matrix(y_true: np.array, y_pred: np.array, color: str) -> None:
+    display_ = ConfusionMatrixDisplay(
+        confusion_matrix=confusion_matrix(y_true, y_pred)
+    )
+    display_.plot(cmap=color)
+    plt.show()
