@@ -73,7 +73,7 @@ def custom_barplot(
     _, axes = plt.subplots(
         nrows=math.ceil(df.shape[1] / ncols), ncols=ncols, figsize=figsize
     )
-    axes = np.ravel(axes) 
+    axes = np.ravel(axes)
     columns_list = [col for col in df.columns]
     palette = sns.color_palette(color, df.shape[1])
 
@@ -85,7 +85,6 @@ def custom_barplot(
 
     for j in range(len(df.columns), len(axes)):
         axes[j].axis('off')
-        
     plt.tight_layout()
     plt.show()
 
@@ -239,3 +238,4 @@ def calculate_performance(
     print(f'Classification report:\n{classification_report(y_true, y_pred)}')
 
     return performance[main_score]
+
