@@ -42,9 +42,10 @@ def custom_pieplot(
     _, axes = plt.subplots(
         nrows=math.ceil(df.shape[1] / ncols), ncols=ncols, figsize=figsize
     )
+    axes = np.ravel(axes)  # Convert axes to 1D array
 
     for i, col in enumerate(df.columns):
-        ax = axes[i // ncols][i % ncols]
+        ax = axes[i]
         ax.pie(
             df[col].value_counts(),
             labels=df[col].value_counts().index,
@@ -54,6 +55,10 @@ def custom_pieplot(
             startangle=90,
         )
         ax.set_title(f'Pie plot of {col}', fontdict=font, pad=15)
+
+    for j in range(len(df.columns), len(axes)):
+        axes[j].axis('off')
+
     plt.tight_layout()
     plt.show()
 
@@ -68,13 +73,19 @@ def custom_barplot(
     _, axes = plt.subplots(
         nrows=math.ceil(df.shape[1] / ncols), ncols=ncols, figsize=figsize
     )
+    axes = np.ravel(axes) 
     columns_list = [col for col in df.columns]
     palette = sns.color_palette(color, df.shape[1])
 
-    for ax, col in zip(axes, columns_list):
+    for i, col in enumerate(columns_list):
+        ax = axes[i]
         sns.barplot(data=df, x=target_col, y=col, ax=ax, color=palette.pop(0))
         ax.bar_label(ax.containers[0], fontsize=14)
         ax.set_title(f'Barplot of {col}', fontdict=font, pad=15)
+
+    for j in range(len(df.columns), len(axes)):
+        axes[j].axis('off')
+        
     plt.tight_layout()
     plt.show()
 
@@ -88,17 +99,22 @@ def custom_histplot(
     '''
         Draw hist plot for each column of a numerical dataframe
     '''
-    _, ax = plt.subplots(
+    _, axes = plt.subplots(
         nrows=math.ceil(df.shape[1] / ncols), ncols=ncols, figsize=figsize
     )
+    axes = np.ravel(axes)  # Convert axes to 1D array
     palette = sns.color_palette(color, df.shape[1])
 
     for i, col in enumerate(df.columns):
-        r, c = i // ncols, i % ncols
+        ax = axes[i]
         sns.histplot(
-            data=df, x=col, ax=ax[r][c], kde=True, color=palette.pop(0)
+            data=df, x=col, ax=ax, kde=True, color=palette[i]
         )
-        ax[r][c].set_title(f'Hist plot of {col}', fontdict=font, pad=15)
+        ax.set_title(f'Hist plot of {col}', fontdict=font, pad=15)
+   
+    for j in range(len(df.columns), len(axes)):
+        axes[j].axis('off')
+    
     plt.tight_layout()
     plt.show()
 
@@ -115,11 +131,17 @@ def custom_boxplot(df: pd.DataFrame, ncols: int, color: str) -> None:
         sharex=False,
         sharey=False
     )
+    axes = np.ravel(axes)
     palette = sns.color_palette(color, df.shape[1])
 
-    for ax, col in zip(axes, df.columns):
+    for i, col in enumerate(df.columns):
+        ax = axes[i]
         sns.boxplot(data=df, x=col, ax=ax, color=palette.pop(0))
         ax.set_title(f'Box plot of {col}', fontdict=font, pad=15)
+    
+    for j in range(len(df.columns), len(axes)):
+        axes[j].axis('off')
+    
     plt.tight_layout()
     plt.show()
 
@@ -128,9 +150,9 @@ def custom_boxplot(df: pd.DataFrame, ncols: int, color: str) -> None:
 
 
 def custom_heatmap(df: pd.DataFrame, figsize: tuple, color: str) -> None:
-    """
-    Draw heatmap for a dataframe
-    """
+    '''
+        Draw heatmap for a dataframe
+    '''
     plt.figure(figsize=figsize)
     sns.heatmap(df.corr(), square=True, annot=True, cmap=color)
     plt.title('Correlation Matrix')
