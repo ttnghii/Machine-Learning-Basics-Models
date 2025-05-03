@@ -6,8 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from sklearn.base import ClassifierMixin
 from sklearn.metrics import precision_score, recall_score, f1_score, \
-    accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+    accuracy_score, confusion_matrix, classification_report, \
+    ConfusionMatrixDisplay, roc_curve, auc
 
 
 font = {
@@ -28,6 +30,15 @@ def read_dataset(path: str) -> pd.DataFrame:
     print('Description of this dataframe:')
     display(df.describe().T)
     return df
+
+
+def add_noise(x: float, noise_level: float = 0.01) -> float:
+    '''
+        Add noise to your data to handle duplicated values
+        :param df: pandas DataFrame
+        :return: pandas DataFrame
+    '''
+    return x + noise_level * np.random.randn()
 
 
 # Custom plots for categorical data
@@ -154,7 +165,7 @@ def custom_heatmap(df: pd.DataFrame, figsize: tuple, color: str) -> None:
     '''
     plt.figure(figsize=figsize)
     sns.heatmap(df.corr(), square=True, annot=True, cmap=color)
-    plt.title('Correlation Matrix')
+    plt.title('Correlation Matrix', fontdict=font, pad=12)
     plt.show()
 
 
@@ -241,8 +252,57 @@ def calculate_performance(
 
 
 def display_cfs_matrix(y_true: np.array, y_pred: np.array, color: str) -> None:
+    '''
+        Show confusion matrix
+    '''
     display_ = ConfusionMatrixDisplay(
         confusion_matrix=confusion_matrix(y_true, y_pred)
     )
     display_.plot(cmap=color)
+    plt.show()
+
+def custom_roc_curve(
+    model1: ClassifierMixin,
+    name_model1: str,
+    model2: ClassifierMixin,
+    name_model2: str,
+    x_test: np.array,
+    y_test: np.array
+):
+    '''
+        Show ROC curve
+    '''
+    y_prob1 = model1.predict_proba(x_test)[:, 1]
+    fpr1, tpr1, _ = roc_curve(y_test, y_prob1)
+    roc_auc1 = auc(fpr1, tpr1)
+
+    y_prob2 = model2.predict_proba(x_test)[:, 1]
+    fpr2, tpr2, _ = roc_curve(y_test, y_prob2)
+    roc_auc2 = auc(fpr2, tpr2)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        fpr1,
+        tpr1,
+        color='green',
+        linestyle=":",
+        linewidth=4,
+        label=f'ROC curve of {name_model1} model (AUC = {roc_auc1:.2f})'
+    )
+    plt.plot(
+        fpr2,
+        tpr2,
+        color='deeppink',
+        linestyle=":",
+        linewidth=4,
+        label=f'ROC curve of {name_model2} model (AUC = {roc_auc2:.2f})'
+    )
+    plt.plot([0, 1], [0, 1], color='gray', lw=2, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve')
+    plt.legend(loc='lower right')
+    plt.grid(True)
     plt.show()
