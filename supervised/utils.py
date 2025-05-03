@@ -2,6 +2,7 @@ import math
 from IPython.display import display
 import pandas as pd
 import numpy as np
+from typing import List
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -306,3 +307,55 @@ def custom_roc_curve(
     plt.legend(loc='lower right')
     plt.grid(True)
     plt.show()
+
+
+def display_model_metric(y_test: np.array, y_pred: np.array, name: str) -> List[list]:
+    '''
+        Show metric of model
+    '''
+    show, all_models = [], []
+    show.append([
+        name,
+        round(accuracy_score(y_test, y_pred), 2),
+        round(precision_score(y_test, y_pred, zero_division=0), 2),
+        round(recall_score(y_test, y_pred), 2),
+        round(f1_score(y_test, y_pred), 2),
+    ])
+    all_models.append([
+        name,
+        round(accuracy_score(y_test, y_pred), 2),
+        round(precision_score(y_test, y_pred, zero_division=0), 2),
+        round(recall_score(y_test, y_pred), 2),
+        round(f1_score(y_test, y_pred), 2),
+    ])
+    return show
+
+
+
+# def custom_pr_curve(
+#     model: ClassifierMixin,
+#     name_model: str,
+#     x_test: np.array,
+#     y_test: np.array
+# ):
+#     # Predict probabilities
+#     y_pred = model.predict_proba(x_test)[:, 1] # keep probabilities for the positive outcome only
+#     # Predict class values
+#     yhat = model.predict(x_test)
+#     prec, rec, thresh = precision_recall_curve(testY, y_pred)
+#     f1, auc_ = f1_score(testY, yhat), auc(rec, prec)
+#     # Summarize scores
+#     print(f'{name_model}: F1={round(f1, 3)}, Auc={round(auc_, 3)}')
+
+#     # Plot the precision-recall curves
+#     no_skill = len(testY[testY==1]) / len(testY)
+#     plt.plot(
+#         [0, 1], [no_skill, no_skill], linestyle='--', label='No Skill', color='green'
+#     )
+#     plt.plot(rec, prec, marker='.', label=name_model, color='deeppink')
+#     # Axis labels
+#     plt.xlabel('Recall')
+#     plt.ylabel('Precision')
+#     plt.legend(loc='lower right')
+#     plt.grid(True)
+#     plt.show()
