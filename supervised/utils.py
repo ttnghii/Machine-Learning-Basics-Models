@@ -198,6 +198,21 @@ def remove_outliers_byusing_quantile(
     return df
 
 
+def remove_outlier_byusing_zscores(
+    df: pd.DataFrame, thresh: float = 3.0
+) -> pd.DataFrame:
+    '''
+        Remove outlier if this data points not in [low_bound, upper_bound].
+        Must apply StandardScaler for df before apply this function.
+    '''
+    print(f'Dataset shape Before remove outlier: {df.shape}')
+    z_scores = np.abs((df - df.mean()) / df.std())
+    outliers = (z_scores > thresh).any(axis=1)
+    df = df[~outliers]
+    print(f'Dataset shape After remove outlier: {df.shape}')
+    return df
+
+
 def remove_uncorrelated_feature(
     df: pd.DataFrame, thresh: float = 0.1
 ) -> pd.DataFrame:
