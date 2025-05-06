@@ -60,9 +60,9 @@ def custom_pieplot(
         ax = axes[i]
         ax.pie(
             df[col].value_counts(),
-            labels=df[col].value_counts().index,
+            # labels=df[col].value_counts().index,
+            # autopct='%1.1f%%',
             colors=sns.color_palette(color),
-            autopct='%1.1f%%',
             shadow=True,
             startangle=90,
         )
@@ -152,12 +152,39 @@ def custom_boxplot(df: pd.DataFrame, ncols: int, color: str) -> None:
     
     for j in range(len(df.columns), len(axes)):
         axes[j].axis('off')
-    
+    plt.tight_layout()
+    plt.show()
+
+
+def custom_countplot(
+    df: pd.DataFrame, target: str, ncols: int, figsize: tuple, color: str
+) -> None:
+    '''
+        Draw countplot for catogirical dataframe to show the relationship of
+        these columns with target column.
+    '''
+    _, axes = plt.subplots(
+        nrows=math.ceil(df.shape[1] / ncols),
+        ncols=ncols,
+        figsize=figsize,
+        sharex=False,
+        sharey=False
+    )
+    axes = np.ravel(axes)
+
+    for i, col in enumerate(df.columns):
+        ax = axes[i]
+        sns.countplot(data=df, x=col, hue=target, ax=ax, palette=color)
+        ax.set_title(f'Count plot of {col}', fontdict=font, pad=15)
+
+    for j in range(len(df.columns), len(axes)):
+        axes[j].axis('off')
     plt.tight_layout()
     plt.show()
 
 
 # Custom plots for both categorical and numerical data
+
 
 
 def custom_heatmap(df: pd.DataFrame, figsize: tuple, color: str) -> None:
@@ -243,9 +270,7 @@ def prepare_x_y(df: pd.DataFrame, target: str) -> tuple():
     return x, y
 
 
-def calculate_performance(
-    y_true: np.array, y_pred: np.array, main_score: str
-) -> float:
+def calculate_performance(y_true: np.array, y_pred: np.array) -> None:
     '''
         :param y_true: ground truth values
         :param y_pred: predictions
@@ -263,8 +288,6 @@ def calculate_performance(
     print(f'F1: {performance["f1"]}')
     print(f'Confusion matrix:\n{confusion_matrix(y_true, y_pred)}')
     print(f'Classification report:\n{classification_report(y_true, y_pred)}')
-
-    return performance[main_score]
 
 
 def display_cfs_matrix(y_true: np.array, y_pred: np.array, color: str) -> None:
