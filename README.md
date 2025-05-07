@@ -1,7 +1,7 @@
 # Machine-Learning-Basic-Models
-Analyze, process some datasets and build basic supervised machine learning models to predict the corresponding real labels.
+In this project, I perform analysis, visualization and processing of some datasets and build basic supervised machine learning models to predict corresponding labels in the real world.
 
-The project includes:
+The project includes 5 notebooks as follows:
 
 1. Predicting home loans using linear regression models and regularized versions Ridge, Lasso, and Elastic Net, all of these performances achieved an $R^2$ of 99.84%. In addition, the results of Polynomial Features also achieved similar scores.
 
